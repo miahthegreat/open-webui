@@ -275,6 +275,11 @@ async def generate_chat_completion(
             else:
                 return convert_response_ollama_to_openai(response)
         else:
+            # Inject user metadata into OpenAI payload
+            form_data["variables"] = {
+            "{{USER_NAME}}": user.name if hasattr(user, "name") else None,
++           "{{USER_EMAIL}}": getattr(user, "email", None),
+            }
             return await generate_openai_chat_completion(
                 request=request,
                 form_data=form_data,
